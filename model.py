@@ -2167,11 +2167,23 @@ def take_last_position_logits(logits):
     """Return logits at the final time step with shape (1, vocab_size)."""
     return logits[:, -1, :]
 
-# Step 160 - apply_temperature (not yet solved)
-# TODO: implement
+# Step 160 - apply_temperature
+def apply_temperature(logits, temperature):
+    """Scale logits by 1/temperature before softmax sampling."""
+    return logits / temperature
 
-# Step 161 - top_k_filter (not yet solved)
-# TODO: implement
+# Step 161 - top_k_filter
+def top_k_filter(logits, k):
+    """Return logits with all but the top-k entries per row set to -inf."""
+    filtered = np.full_like(logits, -np.inf, dtype=float)
+
+    top_k_indices = np.argsort(logits, axis=1)[:, -k:]
+
+    rows = np.arange(logits.shape[0])[:, None]
+
+    filtered[rows, top_k_indices] = logits[rows, top_k_indices]
+
+    return filtered
 
 # Step 162 - softmax_to_probs (not yet solved)
 # TODO: implement

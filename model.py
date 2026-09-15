@@ -1943,8 +1943,156 @@ def adam_parameter_update(param, m_hat, v_hat, lr, eps):
     """Apply the Adam update: param - lr * m_hat / (sqrt(v_hat) + eps)."""
     return param - lr * m_hat / (np.sqrt(v_hat) + eps)
 
-# Step 154 - wire_full_training_loop (not yet solved)
-# TODO: implement
+# Step 154 - wire_full_training_loop
+def wire_full_training_loop(
+    params,
+    train_ids,
+    val_ids,
+    block_size,
+    batch_size,
+    n_steps,
+    lr,
+    betas,
+    eps,
+):
+    """Run the full GPT training loop for n_steps and return (updated_params, history)."""
+
+    beta1, beta2 = betas
+
+    rng = np.random.default_rng(0)
+
+    m, v = initialize_adam_moments(params)
+    t = initialize_adam_step_counter()
+
+    history = []
+
+    def update_tree(params_tree, grads_tree, m_tree, v_tree, t):
+
+        if isinstance(params_tree, dict):
+            for key in params_tree:
+                params_tree[key], m_tree[key], v_tree[key] = update_tree(
+                    params_tree[key],
+                    grads_tree[key],
+                    m_tree[key],
+                    v_tree[key],
+                    t,
+                )
+
+            return params_tree, m_tree, v_tree
+
+        if isinstance(params_tree, list):
+            for i in range(len(params_tree)):
+                params_tree[i], m_tree[i], v_tree[i] = update_tree(
+                    params_tree[i],
+                    grads_tree[i],
+                    m_tree[i],
+                    v_tree[i],
+                    t,
+                )
+
+            return params_tree, m_tree, v_tree
+
+        if isinstance(params_tree, np.ndarray):
+            m_new = adam_update_first_moment(
+                m_tree,
+                grads_tree,
+                beta1,
+            )
+
+            v_new = adam_update_second_moment(
+                v_tree,
+                grads_tree,
+                beta2,
+            )
+
+            m_hat, v_hat = adam_bias_correction(
+                m_new,
+                v_new,
+                beta1,
+                beta2,
+                t,
+            )
+
+            param_new = adam_parameter_update(
+                params_tree,
+                m_hat,
+                v_hat,
+                lr,
+                eps,
+            )
+
+            return param_new, m_new, v_new
+
+        return params_tree, m_tree, v_tree
+
+    for step in range(n_steps):
+
+        # 1. Batch
+        X, Y = get_batch(
+            train_ids,
+            block_size,
+            batch_size,
+            rng,
+        )
+
+        # 2. Forward
+        logits, caches = full_model_forward(X, params)
+
+        B, T, V = logits.shape
+
+        # --------------------------------------------------
+        # Fix cache-name mismatch between steps 145 and 146
+        # --------------------------------------------------
+        if "tok_cache" not in caches["emb"]:
+            caches["emb"]["tok_cache"] = caches["emb"]["token"]
+
+        if "seq_len" not in caches["emb"]:
+            caches["emb"]["seq_len"] = T
+
+        # 3. Flatten for cross entropy
+        flat_logits = logits.reshape(B * T, V)
+        flat_targets = Y.reshape(B * T)
+
+        probs = stable_softmax_2d_rowwise(flat_logits)
+
+        loss = cross_entropy_loss(
+            probs,
+            flat_targets,
+        )
+
+        # 4. Loss gradient
+        d_logits = softmax_cross_entropy_backward(
+            probs,
+            flat_targets,
+        )
+
+        d_logits = d_logits.reshape(B, T, V)
+
+        # 5. Backward
+        grads = full_model_backward(
+            d_logits,
+            caches,
+            params,
+        )
+
+        # 6. Adam
+        t = adam_increment_step(t)
+
+        params, m, v = update_tree(
+            params,
+            grads,
+            m,
+            v,
+            t,
+        )
+
+        # 7. History
+        history.append({
+            "step": step,
+            "train_loss": float(loss),
+        })
+
+    return params, history
 
 # Step 155 - logging_and_validation_loss (not yet solved)
 # TODO: implement

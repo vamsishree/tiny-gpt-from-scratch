@@ -1308,8 +1308,27 @@ def residual_backward(d_y):
     """Backprop through y = x + sublayer_out. Returns (d_x, d_sublayer_out)."""
     return d_y.copy(), d_y.copy()
 
-# Step 137 - pre_layernorm_sublayer_forward (not yet solved)
-# TODO: implement
+# Step 137 - pre_layernorm_sublayer_forward
+def pre_layernorm_sublayer_forward(x, ln_params, sublayer_fn, sublayer_params):
+    ln = layernorm_forward_affine(
+        x,
+        ln_params["gamma"],
+        ln_params["beta"],
+        ln_params.get("eps", 1e-5),
+    )
+
+    sub = sublayer_fn(ln["y"], sublayer_params)
+
+    y = residual_forward(x, sub["y"])
+
+    return {
+        "y": y,
+        "cache": {
+            "x": x,
+            "ln_cache": ln["cache"],
+            "sublayer_cache": sub["cache"],
+        },
+    }
 
 # Step 138 - transformer_block_forward
 def transformer_block_forward(x, block_params):

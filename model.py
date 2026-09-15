@@ -211,8 +211,11 @@ def matmul(a, b):
     """Return the matrix product a @ b for 2D arrays a (M,K) and b (K,N)."""
     return np.matmul(a,b)
 
-# Step 28 - transpose_matrix (not yet solved)
-# TODO: implement
+# Step 28 - transpose_matrix
+def transpose_matrix(arr):
+    """Return the transpose of a 2D array."""
+    # TODO: return the transpose of arr using the .T attribute
+    return arr.T
 
 # Step 29 - sum_keepdims (not yet solved)
 # TODO: implement

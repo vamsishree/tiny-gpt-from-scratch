@@ -1,7 +1,5 @@
 """
 Tiny GPT From Scratch
-
-Assembled from your step-by-step solutions.
 """
 
 import numpy as np
@@ -9,13 +7,11 @@ import numpy as np
 # Step 1 - build_vocab
 def build_vocab(text: str):
     """Return a sorted list of unique characters in text."""
-    # TODO: return a sorted list of every unique character in text
     return sorted(set(text))
 
 # Step 2 - build_stoi
 def build_stoi(vocab):
     """Return a dict mapping each character in vocab to its index."""
-    # TODO: map each character in vocab to its integer position
     final_dict = {}
     for index, char in enumerate(vocab):
         final_dict[char] = index
@@ -24,7 +20,6 @@ def build_stoi(vocab):
 # Step 3 - build_itos
 def build_itos(vocab):
     """Return a dict mapping each index 0..len(vocab)-1 to its character."""
-    # TODO: build an int-to-string lookup from the vocab list
     final_dict = {}
     for index, char in enumerate(vocab):
         final_dict[index] = char
@@ -34,13 +29,11 @@ def build_itos(vocab):
 # Step 4 - encode_char
 def encode_char(ch, stoi):
     """Return the integer token id for a single character ch using stoi."""
-    # TODO: look up ch in the stoi mapping and return its id
     return stoi[ch]
 
 # Step 5 - encode_string
 def encode_string(text, stoi):
     """Encode a full string into a list of token ids using stoi."""
-    # TODO: map each char in text through stoi (via encode_char) into a list of ids
     res = []
     for i in text:
         res.append(stoi[i])
@@ -49,13 +42,11 @@ def encode_string(text, stoi):
 # Step 6 - decode_int
 def decode_int(token_id, itos):
     """Return the single character mapped to token_id by itos."""
-    # TODO: look up the character for token_id in the itos dict
     return itos[token_id]
 
 # Step 7 - decode_ids
 def decode_ids(ids, itos):
     """Decode a list of token ids into a string using itos."""
-    # TODO: map each id through decode_int and join the characters into one string.
     final_str = ""
     for i in ids:
         final_str += itos[i]
@@ -66,7 +57,6 @@ import numpy as np
 
 def make_1d_array(values):
     """Create a 1D NumPy array from a Python list of numbers."""
-    # TODO: convert the input list into a 1D numpy ndarray
     return np.array(values)
 
 # Step 9 - get_array_shape
@@ -74,7 +64,6 @@ import numpy as np
 
 def get_array_shape(arr):
     """Return the shape tuple of a NumPy array."""
-    # TODO: return the shape of arr
     return arr.shape
 
 # Step 10 - get_array_dtype
@@ -82,7 +71,6 @@ import numpy as np
 
 def get_array_dtype(arr):
     """Return the dtype of a NumPy array."""
-    # TODO: return the dtype attribute of arr
     return arr.dtype
 
 # Step 11 - make_2d_zeros
@@ -103,7 +91,6 @@ def make_2d_random(rows, cols, seed):
 # Step 13 - index_element
 def index_element(arr, i, j):
     """Return the scalar element at position (i, j) of a 2D array."""
-    # TODO: return the value at row i, column j of arr
     return arr[i][j]
 
 # Step 14 - slice_row
@@ -125,7 +112,6 @@ import numpy as np
 
 def slice_subblock(arr, r0, r1, c0, c1):
     """Return the sub-block arr[r0:r1, c0:c1] of a 2D array."""
-    # TODO: return the rectangular sub-block of arr bounded by rows [r0,r1) and cols [c0,c1).
     return arr[r0:r1, c0:c1]
 
 # Step 17 - elementwise_add
@@ -133,7 +119,6 @@ import numpy as np
 
 def elementwise_add(a, b):
     """Return the elementwise sum of two same-shape arrays."""
-    # TODO: return a new array whose entries are the pairwise sums of a and b
     return a+b
 
 # Step 18 - elementwise_multiply
@@ -141,7 +126,6 @@ import numpy as np
 
 def elementwise_multiply(a, b):
     """Return the elementwise product of two same-shape arrays."""
-    # TODO: compute the elementwise (Hadamard) product of a and b
     return a*b
 
 # Step 19 - scalar_broadcast_add
@@ -149,7 +133,6 @@ import numpy as np
 
 def scalar_broadcast_add(arr, scalar):
     """Return a new array equal to arr with scalar added to every element."""
-    # TODO: add a Python scalar to every element of an array via broadcasting
     return arr + scalar
 
 # Step 20 - vector_matrix_broadcast_add
@@ -157,7 +140,6 @@ import numpy as np
 
 def vector_matrix_broadcast_add(matrix, vector):
     """Add a 1D vector to each row of a 2D matrix via broadcasting."""
-    # TODO: return matrix + vector broadcast across rows
     return matrix + vector
 
 # Step 21 - array_exp
@@ -165,7 +147,6 @@ import numpy as np
 
 def array_exp(arr):
     """Return the elementwise exponential of arr."""
-    # TODO: apply elementwise exponential to arr and return the result
     return np.exp(arr)
 
 # Step 22 - array_log
@@ -194,7 +175,6 @@ import numpy as np
 
 def sum_axis1(arr):
     """Sum a 2D array along axis 1, returning a 1D array of row sums."""
-    # TODO: collapse the column dimension by summing each row
     return np.sum(arr, 1)
 
 # Step 26 - max_along_axis
@@ -214,7 +194,6 @@ def matmul(a, b):
 # Step 28 - transpose_matrix
 def transpose_matrix(arr):
     """Return the transpose of a 2D array."""
-    # TODO: return the transpose of arr using the .T attribute
     return arr.T
 
 # Step 29 - sum_keepdims
@@ -222,7 +201,6 @@ import numpy as np
 
 def sum_keepdims(arr, axis):
     """Sum along `axis` while keeping that dimension as size 1."""
-    # TODO: sum along the given axis preserving the reduced dim as size 1
     return np.sum(arr, axis, keepdims = True)
 
 # Step 30 - naive_softmax_1d
@@ -978,7 +956,6 @@ def attention_value_backward(d_attn_out, cache):
     cache: dict with 'attn' of shape (B, T, T) and 'v' of shape (B, T, d_head).
     Returns dict with 'd_attn' (B, T, T) and 'd_v' (B, T, d_head).
     """
-    # TODO: backprop through out = attn @ V to obtain gradients for attn and V.
     attn = cache["attn"]
     v = cache["v"]
 

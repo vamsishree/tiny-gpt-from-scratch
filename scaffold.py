@@ -1,13 +1,10 @@
 """
 Tiny GPT From Scratch scaffold.
-
-Run this with: python scaffold.py
-Uses functions defined in model.py.
 """
 
 from model import *  # noqa: F401, F403 (pulls in your solution functions)
 
-"""Tiny GPT from scratch in NumPy: end-to-end scaffold demo."""
+"""Tiny GPT from scratch in NumPy: end-to-end scaffold."""
 
 import numpy as np
 

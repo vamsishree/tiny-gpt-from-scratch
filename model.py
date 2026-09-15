@@ -1870,8 +1870,41 @@ def full_model_backward(d_logits, caches, model_params):
 
     return grads
 
-# Step 147 - initialize_adam_moments (not yet solved)
-# TODO: implement
+# Step 147 - initialize_adam_moments
+def initialize_adam_moments(model_params):
+    """Allocate zeroed Adam first- and second-moment buffers matching model_params."""
+
+    def build_moments(tree):
+        if isinstance(tree, dict):
+            m = {}
+            v = {}
+
+            for key, value in tree.items():
+                m[key], v[key] = build_moments(value)
+
+            return m, v
+
+        if isinstance(tree, list):
+            m = []
+            v = []
+
+            for value in tree:
+                m_value, v_value = build_moments(value)
+                m.append(m_value)
+                v.append(v_value)
+
+            return m, v
+
+        if isinstance(tree, np.ndarray):
+            return (
+                np.zeros_like(tree),
+                np.zeros_like(tree),
+            )
+
+        # Non-array leaves are not parameter buffers.
+        return tree, tree
+
+    return build_moments(model_params)
 
 # Step 148 - initialize_adam_step_counter (not yet solved)
 # TODO: implement

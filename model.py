@@ -766,8 +766,42 @@ def layernorm_backward_divide_std(dy, cache):
     std = np.sqrt(cache["var"] + cache["eps"])
     return dy / std
 
-# Step 90 - layernorm_backward_full (not yet solved)
-# TODO: implement
+# Step 90 - layernorm_backward_full
+import numpy as np
+
+def layernorm_backward_full(dy, cache):
+    """Full LayerNorm backward. Return {'dx', 'dgamma', 'dbeta'}."""
+    x = cache["x"]
+    x_hat = cache["x_hat"]
+    var = cache["var"]
+    gamma = cache["gamma"]
+    eps = cache["eps"]
+
+    D = x.shape[-1]
+
+    # Affine parameter gradients
+    dgamma = np.sum(dy * x_hat, axis=0)
+    dbeta = np.sum(dy, axis=0)
+
+    # Gradient wrt normalized activations
+    dx_hat = dy * gamma
+
+    inv_std = 1.0 / np.sqrt(var + eps)
+
+    # Full LayerNorm input gradient
+    dx = (
+        inv_std / D
+    ) * (
+        D * dx_hat
+        - np.sum(dx_hat, axis=-1, keepdims=True)
+        - x_hat * np.sum(dx_hat * x_hat, axis=-1, keepdims=True)
+    )
+
+    return {
+        "dx": dx,
+        "dgamma": dgamma,
+        "dbeta": dbeta,
+    }
 
 # Step 91 - layernorm_backward_implementation (not yet solved)
 # TODO: implement

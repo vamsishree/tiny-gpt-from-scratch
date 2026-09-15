@@ -268,8 +268,15 @@ def stable_softmax_2d_rowwise(logits):
     exp_vals = np.exp(shifted)
     return exp_vals / np.sum(exp_vals, axis=1, keepdims=True)
 
-# Step 34 - read_text_file (not yet solved)
-# TODO: implement
+# Step 34 - read_text_file
+def read_text_file(text_blob):
+    """Return text_blob unchanged after validating it is a non-empty string."""
+    if text_blob == "":
+        raise ValueError()
+    elif type(text_blob) is not str:
+        raise TypeError()
+    else:
+        return text_blob
 
 # Step 35 - encode_corpus_to_int_array (not yet solved)
 # TODO: implement

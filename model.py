@@ -12,8 +12,14 @@ def build_vocab(text: str):
     # TODO: return a sorted list of every unique character in text
     return sorted(set(text))
 
-# Step 2 - build_stoi (not yet solved)
-# TODO: implement
+# Step 2 - build_stoi
+def build_stoi(vocab):
+    """Return a dict mapping each character in vocab to its index."""
+    # TODO: map each character in vocab to its integer position
+    final_dict = {}
+    for index, char in enumerate(vocab):
+        final_dict[char] = index
+    return final_dict
 
 # Step 3 - build_itos (not yet solved)
 # TODO: implement
